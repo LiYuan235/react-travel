@@ -29,5 +29,5 @@
   "include": [
     "src",
     "components"
-  ]
+, "pages/home/mockups.ts", "pages/home/mockups.ts","pages"  ]
 }
