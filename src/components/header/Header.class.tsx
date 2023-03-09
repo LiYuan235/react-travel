@@ -4,34 +4,27 @@ import { Layout, Typography, Input, Button, Dropdown, Menu } from 'antd'
 import { GlobalOutlined } from '@ant-design/icons'
 import logo from '../../assets/logo.svg';
 import {withRouter,RouteComponentProps} from "react-router-dom";
-import store from "../../redux/store"
-import { languageState } from '../../redux/languageReducer';
-import {withTranslation,WithTranslation} from "react-i18next"
+import {withTranslation,WithTranslation} from "react-i18next";
+import { changelanguageActionCreator } from '../../redux/language/languageActions';
+import { connect} from 'react-redux';
+import {RootState} from "../../redux/store";
+import { Dispatch } from 'redux';
 
-interface Props extends RouteComponentProps{
-
-}
-interface State extends languageState{
-}
-class HeaderComponent extends React.Component<RouteComponentProps & WithTranslation,State>{
-  constructor(props){
-    super(props);
-    const storeState=store.getState();
-    this.state={
-      language:storeState.language,
-      languageList:storeState.languageList
+const mapState = (state: RootState) => ({
+  language:state.language,
+  languageList:state.languageList
+})
+const mapDispatch =(dispatch:Dispatch)=> {
+  return {
+    changeLanguage:(code:"zh"|"en")=>{
+      const action=changelanguageActionCreator(code);
+      dispatch(action)
     }
-    store.subscribe(()=>{
-      const storeate=store.getState();
-      this.setState({
-        language:storeate.language
-      })
-    })
   }
+}
+class HeaderComponent extends React.Component<RouteComponentProps & WithTranslation&ReturnType<typeof mapState>&ReturnType<typeof mapDispatch>>{
   menuClickHandle=(e)=>{
-    console.log(e)
-    const action={type:"change_language",payload:e.key,};
-    store.dispatch(action);
+    this.props.changeLanguage(e.key);
   }
   render(){
     const {t}=this.props;
@@ -46,11 +39,11 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
               style={{ marginLeft: 15, width: 100 }}
               size="small"
               overlay={<Menu onClick={this.menuClickHandle}>
-                {this.state.languageList.map(l=>{return <Menu.Item key={l.code}>{l.name}</Menu.Item>})}
+                {this.props.languageList.map(l=>{return <Menu.Item key={l.code}>{l.name}</Menu.Item>})}
               </Menu>}
               icon={<GlobalOutlined />}
             >
-              {this.state.language==="zh"?"中文":"English"}
+              {this.props.language==="zh"?"中文":"English"}
             </Dropdown.Button>
             <Button.Group className={styles['button-group']} size="small">
               <Button onClick={()=>{history.push("register")}}>{t("header.register")}</Button>
@@ -92,4 +85,4 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
     )
   } 
 }
-export const Header=withTranslation()(withRouter(HeaderComponent));
+export const Header=connect(mapState,mapDispatch)(withTranslation()(withRouter(HeaderComponent)));
