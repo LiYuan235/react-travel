@@ -35,8 +35,11 @@ export const Header: React.FC = () => {
           <Typography.Text>让旅游更幸福</Typography.Text>
           <Dropdown.Button
             style={{ marginLeft: 15, width: 100 }}
-            menu={menuProps}
             size="small"
+            overlay={<Menu>
+              <Menu.Item>中文</Menu.Item>
+              <Menu.Item>English</Menu.Item>
+            </Menu>}
             icon={<GlobalOutlined />}
           >
             语言

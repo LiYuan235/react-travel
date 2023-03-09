@@ -10,7 +10,7 @@
     align-items: center;
   }
   .button-group{
-    margin-left:80%;
+    margin-left:80% !important;
   }
   .main-header{
     background-color: white !important;
